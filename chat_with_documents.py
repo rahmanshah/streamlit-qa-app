@@ -78,6 +78,15 @@ def ask_and_get_answer(query, vector_store, llm, k=3):
     answer = qa_chain.invoke(query)
 
     return answer
+
+def clear_session_state():
+    """
+    Clear the session state.
+    """
+    if 'history' in st.session_state:
+        del st.session_state['history']
+    if 'vector_store' in st.session_state:
+        del st.session_state['vector_store']
     
 if __name__ == "__main__":
     load_dotenv(find_dotenv(), override=True)
@@ -102,7 +111,7 @@ if __name__ == "__main__":
         uploaded_file = st.file_uploader("Upload a document (PDF, DOCX, TXT):", type=["pdf", "docx", "txt"])
         chunk_size = st.number_input("Chunk size:", min_value=100, max_value=2048, value=200)
         k = st.number_input("k", min_value=1, max_value=10, value=3)
-        add_data = st.button("Add Data")
+        add_data = st.button("Add Data", on_click=clear_session_state)
 
         if uploaded_file and add_data:
             with st.spinner("Reading, Chunking and embedding file..."):
@@ -126,16 +135,16 @@ if __name__ == "__main__":
         answer = ask_and_get_answer(q,vector_store, llm, k=k)
         st.text_area("LLM Answer:", value=answer['result'])
 
-    st.divider()
+        st.divider()
 
-    if 'history' not in st.session_state:
-        st.session_state.history = ''
-    
-    value = {"Question": q, "answer": answer['result']}
+        if 'history' not in st.session_state:
+            st.session_state.history = ''
+        
+        value = {"Question": q, "answer": answer['result']}
 
-    st.session_state.history = f'{value} \n {"-" * 100} \n {st.session_state.history}'
-    h = st.session_state.history
-    st.text_area(label="Chat History", value=h, height=400, disabled=True, key="history")
+        st.session_state.history = f'{value} \n {"-" * 100} \n {st.session_state.history}'
+        h = st.session_state.history
+        st.text_area(label="Chat History", value=h, height=400, disabled=True, key="history")
 
 
 
