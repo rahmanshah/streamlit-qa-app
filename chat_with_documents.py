@@ -5,9 +5,6 @@ import os
 from langchain_groq import ChatGroq
 from langchain_community.vectorstores import Chroma
 
-load_dotenv(find_dotenv(), override=True)
-
-
 llm = ChatGroq(model="llama3-8b-8192", temperature=1)
 
 response = llm.invoke("What is the capital of Finland?")
@@ -88,3 +85,22 @@ def load_document(file_path):
         answer = qa_chain.invoke(query)
 
         return answer
+    
+if __name__ == "__main__":
+    load_dotenv(find_dotenv(), override=True)
+
+    st.image("image.png")
+    st.subheader("LLM Q&A with Documents App")
+
+    with st.sidebar:
+        api_key = st.text_input("Enter your GROQ API key", type="password")
+        if api_key:
+            os.environ["GROQ_API_KEY"] = api_key
+            st.success("API key set successfully!")
+        else:
+            st.warning("Please enter your GROQ API key.")
+        
+        uploaded_file = st.file_uploader("Upload a document (PDF, DOCX, TXT):", type=["pdf", "docx", "txt"])
+        chunk_size = st.number_input("Chunk size:", min_value=100, max_value=2048, value=768)
+        k = st.number_input("k", min_value=1, max_value=10, value=3)
+        add_data = st.button("Add Data")
