@@ -5,3 +5,6 @@ docx2txt
 pypdf
 chromadb
 tiktoken
+python-dotenv
+langchain_ollama
+langchain_community
