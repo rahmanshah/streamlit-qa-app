@@ -82,7 +82,7 @@ def ask_and_get_answer(query, vector_store, llm, k=3):
 if __name__ == "__main__":
     load_dotenv(find_dotenv(), override=True)
 
-    llm = ChatGroq(model="llama3-8b-8192", temperature=1)
+    llm = ChatGroq(model="llama3-8b-8192", temperature=0.1)
     
     embeddings = OllamaEmbeddings(model="nomic-embed-text:latest")
 
@@ -90,15 +90,14 @@ if __name__ == "__main__":
     st.subheader("LLM Q&A with Documents App")
 
     with st.sidebar:
-        """
         # Modify the snippet below to set your OpenAI/Anthropic/Mistral API key
-        api_key = st.text_input("Enter your GROQ API key", type="password")
-        if api_key:
-            os.environ["GROQ_API_KEY"] = api_key
-            st.success("API key set successfully!")
-        else:
-            st.warning("Please enter your GROQ API key.")
-        """
+        #api_key = st.text_input("Enter your GROQ API key", type="password")
+        #if api_key:
+        #    os.environ["GROQ_API_KEY"] = api_key
+        #    st.success("API key set successfully!")
+        #else:
+        #    st.warning("Please enter your GROQ API key.")
+        
     
         uploaded_file = st.file_uploader("Upload a document (PDF, DOCX, TXT):", type=["pdf", "docx", "txt"])
         chunk_size = st.number_input("Chunk size:", min_value=100, max_value=2048, value=200)
@@ -120,13 +119,9 @@ if __name__ == "__main__":
                 st.session_state.vector_store = vector_store
                 st.success("File uploaded, chunked and embedded successfully!")
 
-        q= st.text_input("Ask a question about the document:")
-        if q and 'vector_store' in st.session_state:
-            with st.spinner("Getting answer..."):
-                st.write(f"K: {k}")
-                answer = ask_and_get_answer(q, st.session_state.vector_store, llm, k=k)
-                st.text_area("LLM Answer:", value=answer)
-
-
-
-            
+    q= st.text_input("Ask a question about the document:")
+    if q and 'vector_store' in st.session_state:
+         with st.spinner("Getting answer..."):
+            st.write(f"K: {k}")
+            answer = ask_and_get_answer(q, st.session_state.vector_store, llm, k=k)
+            st.text_area("LLM Answer:", value=answer['result'])
