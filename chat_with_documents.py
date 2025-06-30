@@ -121,16 +121,22 @@ if __name__ == "__main__":
 
     q= st.text_input("Ask a question about the document:")
     if q and 'vector_store' in st.session_state:
-         with st.spinner("Getting answer..."):
-            st.write(f"K: {k}")
-            answer = ask_and_get_answer(q, st.session_state.vector_store, llm, k=k)
-            st.text_area("LLM Answer:", value=answer['result'])
+        vector_store = st.session_state.vector_store
+        #st.write(f"K: {k}")
+        answer = ask_and_get_answer(q,vector_store, llm, k=k)
+        st.text_area("LLM Answer:", value=answer['result'])
 
     st.divider()
 
     if 'history' not in st.session_state:
         st.session_state.history = ''
+    
     value = {"Question": q, "answer": answer['result']}
-    st.session_state.history = f'{value} \n {"-" *40} \n {st.session_state.history}'
+
+    st.session_state.history = f'{value} \n {"-" * 100} \n {st.session_state.history}'
     h = st.session_state.history
     st.text_area(label="Chat History", value=h, height=400, disabled=True, key="history")
+
+
+
+    
